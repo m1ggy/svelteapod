@@ -7,10 +7,6 @@
   let loading = true;
   let photodets;
 
-  const unsubscribe = photoObject.subscribe((obj) => {
-    photodets = obj;
-  });
-
   onMount(() => {
     let timer = setTimeout(() => {
       fetch(
@@ -19,10 +15,12 @@
         .then((res) => res.json())
         .then((data) => {
           photoObject.set(data);
-          loading = false;
         });
     }, 3000);
     return timer;
+  });
+  const unsubscribe = photoObject.subscribe((obj) => {
+    photodets = obj;
   });
   onDestroy(unsubscribe);
 </script>
@@ -35,16 +33,20 @@
           class="dot3">.</span
         >
       </h2>
+      <div class="photo-container" style="display:none">
+        <img
+          alt="nasa"
+          style="display:none"
+          src={photodets.hdurl}
+          on:load={() => (loading = false)}
+          class="main-photo"
+        />
+      </div>
     </div>
   {:else}
     <div transition:fly={{ y: 100, duration: 3000 }} class="content-container">
       <div class="photo-container">
-        <img
-          alt="nasa"
-          class="main-photo"
-          src={photodets.hdurl}
-          loading="lazy"
-        />
+        <img alt="nasa" class="main-photo" src={photodets.hdurl} />
       </div>
       <div class="text-container">
         <h1>{photodets.title}</h1>
@@ -56,7 +58,10 @@
             day: 'numeric',
           })}
         </p>
-        <p>{photodets.copyright}</p>
+        {#if photodets.copyright != null}
+          <p>{photodets.copyright}</p>
+        {/if}
+
         <p>{photodets.explanation}</p>
       </div>
     </div>
@@ -83,10 +88,8 @@
     text-align: center;
   }
   .main-photo {
-    height: 100%;
-    width: 50wv;
-    margin: 0;
-    padding: 0;
+    max-width: 100%;
+    max-height: 100vh;
   }
   .content-container {
     color: white;
@@ -114,9 +117,8 @@
     flex-direction: column;
   }
   .text-container > p {
-    text-align: justify;
-    margin-left: 100px;
-    margin-right: 100px;
+    margin-left: 15%;
+    margin-right: 15%;
   }
   .loading-container {
     color: white;
@@ -128,9 +130,12 @@
     justify-content: center;
   }
   .photo-container {
-    width: 100%;
-    height: 100vh;
-    margin: 20px;
+    width: 100vw;
+    height: max-content;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   .dot1 {
