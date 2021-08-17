@@ -98,10 +98,7 @@
     z-index: 999;
     position: relative;
   }
-  .content-container > h1 {
-    margin-top: 10vh;
-    margin-bottom: 5vh;
-  }
+
   .text-container {
     min-height: 100vh;
     text-align: center;
