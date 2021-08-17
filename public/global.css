@@ -2,10 +2,6 @@
   font-family: Baskervald;
   src: url('./fonts/Baskervald.otf');
 }
-@font-face {
-  font-family: CubestLight;
-  src: url('./fonts/CubestLight.otf');
-}
 
 html,
 body {

@@ -1,13 +1,15 @@
 <script>
   import { onMount } from 'svelte';
-  import { start_hydrating } from 'svelte/internal';
+  import { onDestroy } from 'svelte/internal';
   import { photoObject } from './stores';
   import { fly, fade } from 'svelte/transition';
 
   let loading = true;
   let photodets;
 
-  photoObject.subscribe((obj) => (photodets = obj));
+  const unsubscribe = photoObject.subscribe((obj) => {
+    photodets = obj;
+  });
 
   onMount(() => {
     let timer = setTimeout(() => {
@@ -20,7 +22,9 @@
           loading = false;
         });
     }, 3000);
+    return timer;
   });
+  onDestroy(unsubscribe);
 </script>
 
 <div class="wrapper">
@@ -34,12 +38,16 @@
     </div>
   {:else}
     <div transition:fly={{ y: 100, duration: 3000 }} class="content-container">
-      <h1>{photodets.title}</h1>
       <div class="photo-container">
-        <img src={photodets.hdurl} alt="nasa" class="main-photo" />
+        <img
+          alt="nasa"
+          class="main-photo"
+          src={photodets.hdurl}
+          loading="lazy"
+        />
       </div>
       <div class="text-container">
-        <p>{photodets.copyright}</p>
+        <h1>{photodets.title}</h1>
         <p>
           {new Date(photodets.date).toLocaleString('en', {
             weekday: 'long',
@@ -48,6 +56,7 @@
             day: 'numeric',
           })}
         </p>
+        <p>{photodets.copyright}</p>
         <p>{photodets.explanation}</p>
       </div>
     </div>
@@ -76,6 +85,8 @@
   .main-photo {
     height: 100%;
     width: 50wv;
+    margin: 0;
+    padding: 0;
   }
   .content-container {
     color: white;
@@ -92,18 +103,23 @@
     margin-bottom: 5vh;
   }
   .text-container {
+    min-height: 100vh;
     text-align: center;
     width: 100vw;
     background-color: #ede3d9;
     color: #141e29;
     height: max-content;
     line-height: 2;
-    margin-top: 50px;
-    padding: 50px;
     white-space: normal;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
   }
   .text-container > p {
-    margin: 25px;
+    text-align: justify;
+    margin-left: 100px;
+    margin-right: 100px;
   }
   .loading-container {
     color: white;
