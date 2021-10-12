@@ -10,7 +10,7 @@ body {
   overflow-x: hidden;
   padding: 0 !important;
   margin: 0 !important;
-  font-family: Baskervald, sans-serif;
+  font-family: Baskervald, monospace;
 }
 * {
   margin: 0;
